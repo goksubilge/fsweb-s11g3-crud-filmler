@@ -6,6 +6,7 @@ import axios from "axios";
 
 const EditMovieForm = (props) => {
   const { push } = useHistory();
+  const { id } = useParams();
 
   const { setMovies } = props;
   const [movie, setMovie] = useState({
@@ -15,6 +16,19 @@ const EditMovieForm = (props) => {
     metascore: 0,
     description: "",
   });
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:9000/api/movies/${id}`)
+      .then((res) => {
+        setMovie(res.data);
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+  // useParams ile id leri çekiyorum buraya, filme girip edite tıkladığımda filmin ilgileri karşıma geliyor.
 
   const handleChange = (e) => {
     setMovie({
@@ -29,7 +43,7 @@ const EditMovieForm = (props) => {
       .put(`http://localhost:9000/api/movies/${id}`, movie)
       .then((res) => {
         setMovies(res.data);
-        push(`/movies/${movie.id}`);
+        push(`/movies/${id}`); //değiştirdiğimiz filmin id'sine geri dönebilmek için güncelledim burayı
       })
       .catch((err) => {
         console.log(err);
@@ -42,7 +56,9 @@ const EditMovieForm = (props) => {
     <div className="bg-white rounded-md shadow flex-1">
       <form onSubmit={handleSubmit}>
         <div className="p-5 pb-3 border-b border-zinc-200">
-          <h4 className="text-xl font-bold">Düzenleniyor <strong>{movie.title}</strong></h4>
+          <h4 className="text-xl font-bold">
+            Düzenleniyor <strong>{movie.title}</strong>
+          </h4>
         </div>
 
         <div className="px-5 py-3">
